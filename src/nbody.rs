@@ -82,7 +82,7 @@ fn calculate_accels(bodies: &Vec<Body>, forces: Vec<Force>) -> Vec<Accel> {
 pub fn move_all_bodies(bodies: &mut Vec<Body>, dt: f64) {
     let forces = calculate_forces(bodies);
     let accels = calculate_accels(bodies, forces);
-    for i in 0..bodies.len() {
+    for i in 1..bodies.len() {
         bodies[i].move_body(accels[i], dt);
     }
 }

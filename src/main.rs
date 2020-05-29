@@ -5,12 +5,12 @@ use std::str::{FromStr};
 use std::fs::File;
 
 use ggez;
-use ggez::timer;
-use ggez::event;
-use ggez::graphics;
+use ggez::{timer, graphics};
 use ggez::nalgebra as na;
 use ggez::{Context, GameResult};
 use ggez::conf::WindowMode;
+use ggez::event::{self, EventHandler, KeyCode};
+use ggez::input::keyboard;
 
 struct MainState {
     pub bodies: Vec<Body>,
@@ -18,6 +18,8 @@ struct MainState {
     pub trajectories: Vec<Vec<na::Point2<f32>>>,
     pub time_to_save: u8,
     pub draw_trajectory: bool,
+    is_running: bool,
+    space_down: bool,
 }
 
 impl MainState {
@@ -28,7 +30,9 @@ impl MainState {
             dt: dt, 
             trajectories: traj, 
             time_to_save: 1,
-            draw_trajectory: draw_trajectory
+            draw_trajectory: draw_trajectory,
+            is_running: true,
+            space_down: false,
         };
         Ok(s)
     }
@@ -49,12 +53,25 @@ impl MainState {
     }
 }
 
-impl event::EventHandler for MainState {
+impl EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
-        const DESIRED_FPS: u32 = 900;
+        const DESIRED_FPS: u32 = 2900;
 
+        if keyboard::is_key_pressed(ctx, KeyCode::R) {
+            self.trajectories = vec![vec![]; self.bodies.len()];
+        }
+        if keyboard::is_key_pressed(ctx, KeyCode::Space) {
+            if !self.space_down {
+                self.is_running ^= true;
+                self.space_down = true;
+            }
+        } else {
+            self.space_down = false;
+        }
         while timer::check_update_time(ctx, DESIRED_FPS) { 
-            self.tick();
+            if self.is_running {
+                self.tick();
+            }
         }
 
         Ok(())
@@ -67,7 +84,7 @@ impl event::EventHandler for MainState {
 
         if self.draw_trajectory && self.trajectories[0].len() > 2 {
             for i in 0..self.trajectories.len() {
-                if i == 20 {
+                if i == 0 {
                     let g_body = graphics::Mesh::new_circle(
                         ctx, 
                         graphics::DrawMode::fill(), 
@@ -90,20 +107,28 @@ impl event::EventHandler for MainState {
 
         }
 
-        if true { // !self.draw_trajectory {
-            for i in 0..self.bodies.len() {
-                let g_body = graphics::Mesh::new_circle(
-                    ctx, 
-                    graphics::DrawMode::fill(), 
-                    na::Point2::new(0.0,0.0), 
-                    self.bodies[i].radius, 
-                    0.02, 
-                    self.bodies[i].color)?;
-                let (x, y) = self.bodies[i].scale_pos;
-                let p_body = na::Point2::new(x as f32 + offsetx, y as f32 + offsety);
-                
-                graphics::draw(ctx, &g_body, (p_body,))?;
-            }
+        let outline = graphics::Mesh::new_circle(
+            ctx,
+            graphics::DrawMode::stroke(1.),
+            na::Point2::new(0.0, 0.0),
+            2.0,
+            0.02,
+            graphics::Color::from_rgb(255,0,0),
+        )?;
+
+        for i in 0..self.bodies.len() {
+            let g_body = graphics::Mesh::new_circle(
+                ctx, 
+                graphics::DrawMode::fill(), 
+                na::Point2::new(0.0,0.0), 
+                self.bodies[i].radius, 
+                0.02, 
+                self.bodies[i].color)?;
+            let (x, y) = self.bodies[i].scale_pos;
+            let p_body = na::Point2::new(x as f32 + offsetx, y as f32 + offsety);
+            
+            graphics::draw(ctx, &outline, (p_body,))?;
+            graphics::draw(ctx, &g_body, (p_body,))?;
         }
 
         graphics::present(ctx)?;
