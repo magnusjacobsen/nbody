@@ -1,6 +1,6 @@
 use ggez::graphics;
 
-const AU: f64 = 1.4960e+11; // in meters, roughly distance earth -> sun
+pub const AU: f64 = 1.4960e+11; // in meters, roughly distance earth -> sun
 const SCALE: f64 = 20. / AU;
 const GRAVITY: f64 = 6.67428e-11;
 
@@ -13,18 +13,17 @@ type Force = (f64,f64);
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Body {
-    pos: Pos,
+    pub pos: Pos,
     vel: Vel,
     mass: Mass,
     pub color: graphics::Color,
     pub name: String,
-    pub scale_pos: Pos,
     pub radius: f32,
 }
 
 impl Body {
     pub fn new(p: Pos, v: Vel, m: Mass, c: graphics::Color, n: String, r: f32) -> Body {
-        Body {pos: p, vel: v, mass: m, color: c, name: n, radius: r, scale_pos: (p.0 * SCALE, p.1 * SCALE),}
+        Body {pos: p, vel: v, mass: m, color: c, name: n, radius: r,}
     }
 
     fn get_distance(&self, other: &Pos) -> Dist {
@@ -50,7 +49,6 @@ impl Body {
     fn move_body(&mut self, a: Accel, dt: f64) {
         self.vel = (self.vel.0 + dt * a.0, self.vel.1 + dt * a.1);
         self.pos = (self.pos.0 + dt * self.vel.0, self.pos.1 + dt * self.vel.1);
-        self.scale_pos = (self.pos.0 * SCALE, self.pos.1 * SCALE);
     }
 }
 
