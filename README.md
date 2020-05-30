@@ -12,4 +12,4 @@ A small Rust nbody simulation of the sun and planets in the solar system
 | Space | Pause (toggle) |
 | Up/Down | Increase/decrease the FPS |
 | PgUp/PgDown | Zoom in/out (resets trajectories) |
-|Escape| Exit |
+| Esc | Exit |
