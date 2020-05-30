@@ -1,9 +1,9 @@
 # nbody
-A small Rust nbody simulation of the solar system
+A small Rust nbody simulation of the sun and planets in solar system
 
 <img src="screenshot.PNG" alt="screenshot" width="500">
 
-## Controls (Keyboard)
+## Keyboard Controls
 | Key | Action |
 | --- | ------ |
 | W,A,S,D | Move the camera Up,Left,Down,Right |
