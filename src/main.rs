@@ -36,7 +36,7 @@ impl MainState {
         let mut pressed_keys = vec![];
         let mut keys_up = HashMap::new();
         let mut keys_down = HashMap::new();
-        let keys = vec![KeyCode::Space, KeyCode::T, KeyCode::R,];
+        let keys = vec![KeyCode::Space, KeyCode::T,];
         for key in keys {
             pressed_keys.push((key, false));
             keys_up.insert(key, false);
@@ -110,15 +110,14 @@ impl EventHandler for MainState {
 
         update_key_activity(ctx, self);
 
-        if self.keys_down[&KeyCode::R] {
-            self.trajectories = vec![vec![]; self.bodies.len()];
-        }
         if self.keys_down[&KeyCode::Space] {
             self.is_running ^= true;
         }
         if self.keys_down[&KeyCode::T] {
             self.draw_trajectory ^= true;
-            self.trajectories = vec![vec![]; self.bodies.len()];
+            if !self.draw_trajectory {
+                self.trajectories = vec![vec![]; self.bodies.len()];
+            }
         }
         if keyboard::is_key_pressed(ctx, KeyCode::Down) {
             if self.desired_fps > 10 {
