@@ -1,5 +1,5 @@
 # nbody
-A small Rust nbody simulation of the sun and planets in solar system
+A small Rust nbody simulation of the sun and planets in the solar system
 
 <img src="screenshot.PNG" alt="screenshot" width="500">
 
