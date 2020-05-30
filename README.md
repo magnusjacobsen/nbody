@@ -1,6 +1,8 @@
 # nbody
 A small Rust nbody simulation of the solar system
 
+<img src="screenshot.PNG" alt="screenshot" width="500">
+
 ## Controls (Keyboard)
 | Key | Action |
 | --- | ------ |
