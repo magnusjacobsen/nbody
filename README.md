@@ -1,5 +1,5 @@
 # nbody
-A small Rust nbody simulation of the sun and planets in the solar system
+A small Rust nbody simulation of the solar system
 
 <img src="screenshot.PNG" alt="screenshot" width="500">
 
@@ -7,9 +7,8 @@ A small Rust nbody simulation of the sun and planets in the solar system
 | Key | Action |
 | --- | ------ |
 | W,A,S,D | Move camera |
-| R | Reset drawn trajectories |
-| T | Draw trajectories (toggle) |
+| T | Draw trajectories (toggle) -- also resets trajectories |
 | Space | Pause (toggle) |
 | Up/Down | Increase/decrease the FPS |
-| PgUp/PgDown | Zoom in/out (resets trajectories) |
+| PgUp/PgDown | Zoom in/out -- also resets trajectories |
 | Esc | Exit |
