@@ -13,8 +13,6 @@ use ggez::event::{self, EventHandler, KeyCode};
 use ggez::input::keyboard;
 use std::collections::HashMap;
 
-const AU: f64 = 1.4960e+11; // in meters, roughly distance earth -> sun
-
 struct MainState {
     pub bodies: Vec<Body>,
     dt: f64,
@@ -68,14 +66,16 @@ impl MainState {
 
     fn tick(&mut self) {
         nbody::move_all_bodies(&mut self.bodies, self.dt);
-        self.time_to_save -= 1;
-        if self.time_to_save == 0 {
-            for i in 0..self.bodies.len() {
-                let (x,y) = scale_pos(&self.bodies[i], self.scale);
-                let p = na::Point2::new(x as f32, y as f32);
-                self.trajectories[i].push(p);
+        if self.draw_trajectory {
+            self.time_to_save -= 1;
+            if self.time_to_save == 0 {
+                for i in 0..self.bodies.len() {
+                    let (x,y) = scale_pos(&self.bodies[i], self.scale);
+                    let p = na::Point2::new(x as f32, y as f32);
+                    self.trajectories[i].push(p);
+                }
+                self.time_to_save = 10;
             }
-            self.time_to_save = 10;
         }
     }
 }
@@ -118,6 +118,7 @@ impl EventHandler for MainState {
         }
         if self.keys_down[&KeyCode::T] {
             self.draw_trajectory ^= true;
+            self.trajectories = vec![vec![]; self.bodies.len()];
         }
         if keyboard::is_key_pressed(ctx, KeyCode::Down) {
             if self.desired_fps > 10 {

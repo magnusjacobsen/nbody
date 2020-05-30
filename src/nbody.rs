@@ -1,7 +1,6 @@
 use ggez::graphics;
 
 pub const AU: f64 = 1.4960e+11; // in meters, roughly distance earth -> sun
-const SCALE: f64 = 20. / AU;
 const GRAVITY: f64 = 6.67428e-11;
 
 type Vel = (f64,f64);
