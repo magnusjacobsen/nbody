@@ -3,20 +3,18 @@ use nbody::Body;
 use std::io::{self, BufRead};
 use std::str::{FromStr};
 use std::fs::File;
+use std::collections::HashMap;
 
 use ggez;
-use ggez::{timer, graphics};
-use ggez::nalgebra as na;
-use ggez::{Context, GameResult};
+use ggez::{timer, graphics, GameError, Context, GameResult};
 use ggez::conf::WindowMode;
 use ggez::event::{self, EventHandler, KeyCode};
 use ggez::input::keyboard;
-use std::collections::HashMap;
 
 struct MainState {
     pub bodies: Vec<Body>,
     dt: f64,
-    pub trajectories: Vec<Vec<na::Point2<f32>>>,
+    pub trajectories: Vec<Vec<glam::Vec2>>,
     pub time_to_save: u8,
     pub draw_trajectory: bool,
     is_running: bool,
@@ -71,7 +69,7 @@ impl MainState {
             if self.time_to_save == 0 {
                 for i in 0..self.bodies.len() {
                     let (x,y) = scale_pos(&self.bodies[i], self.scale);
-                    let p = na::Point2::new(x as f32, y as f32);
+                    let p = glam::Vec2::new(x as f32, y as f32);
                     self.trajectories[i].push(p);
                 }
                 self.time_to_save = 10;
@@ -105,7 +103,7 @@ fn update_key_activity(ctx: &mut Context, state: &mut MainState) {
     state.pressed_keys = next;
 }
 
-impl EventHandler for MainState {
+impl EventHandler<GameError> for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
 
         update_key_activity(ctx, self);
@@ -174,7 +172,7 @@ impl EventHandler for MainState {
                     &self.trajectories[i],
                     1.0, 
                     self.bodies[i].color)?;
-                graphics::draw(ctx, &trajectory, (na::Point2::new(offsetx, offsety),))?;
+                graphics::draw(ctx, &trajectory, (glam::Vec2::new(offsetx, offsety),))?;
             }
 
         }
@@ -183,12 +181,12 @@ impl EventHandler for MainState {
             let g_body = graphics::Mesh::new_circle(
                 ctx, 
                 graphics::DrawMode::fill(), 
-                na::Point2::new(0.0,0.0), 
+                glam::Vec2::new(0.0,0.0), 
                 self.bodies[i].radius, 
                 0.02, 
                 self.bodies[i].color)?;
             let (x, y) = scale_pos(&self.bodies[i], self.scale);
-            let p_body = na::Point2::new(x as f32 + offsetx, y as f32 + offsety);
+            let p_body = glam::Vec2::new(x as f32 + offsetx, y as f32 + offsety);
             
             graphics::draw(ctx, &g_body, (p_body,))?;
         }
@@ -232,9 +230,9 @@ fn main() -> GameResult {
                     resizable: false,
                     ..WindowMode::default()
                 });
-    let (ctx, event_loop) = &mut cb.build()?;
-    graphics::set_window_title(ctx, "nbody");
-    let state = &mut MainState::new(bodies, 25000., draw_trajectory)?;
+    let (mut ctx, event_loop) = cb.build()?;
+    graphics::set_window_title(&ctx, "nbody");
+    let mut state = MainState::new(bodies, 25000., draw_trajectory)?;
     event::run(ctx, event_loop, state)
 
 }
